@@ -1,0 +1,28 @@
+{
+    "Controls": [{
+        "key": 1,
+        "label": "Name",
+        "type": "Input",
+        "value": 1111
+    }, {
+        "key": 2,
+        "label": "Name2",
+        "type": "Input",
+        "value": 222
+    }, {
+        "key": 3,
+        "label": "Name3",
+        "type": "Input",
+        "value": 333
+    }, {
+        "key": 4,
+        "label": "Name4",
+        "type": "Input",
+        "value": 444
+    }, {
+        "key": 5,
+        "label": "Name5",
+        "type": "Input",
+        "value": 555
+    }]
+}

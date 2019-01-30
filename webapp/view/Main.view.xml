@@ -1,0 +1,46 @@
+<mvc:View controllerName="evola.controller.Main"
+          xmlns="sap.m"
+          xmlns:core="sap.ui.core"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns:evola="evola.ui.containers"
+          xmlns:form="sap.ui.layout.form"
+          height="100%">
+    <Page id="MainPageId"
+          title="{i18n>title}"
+          enableScrolling="false"
+          showHeader="false"
+          showNavButton="true"
+          class="sapUiSizeCompact">
+
+        <content>
+            <form:SimpleForm editable="true"
+                             layout="ColumnLayout"
+                             emptySpanXL="0"
+                             emptySpanL="7"
+                             emptySpanM="0"
+                             emptySpanS="0"
+                             columnsXL="1"
+                             columnsL="1"
+                             columnsM="1"
+                             singleContainerFullSize="false"
+                             width="50rem"
+                             class="noTitle">
+                <form:content>
+                    <evola:Constructor
+                            change="onChangeValue"
+                            items="{/Controls}">
+                        <evola:items>
+                            <evola:ConstructorItem
+                                    name="{key}"
+                                    label="{label}"
+                                    type="{type}"
+                                    value="{value}"
+                                    change="onChangeValue"
+                                    liveChange="onLiveChange"/>
+                        </evola:items>
+                    </evola:Constructor>
+                </form:content>
+            </form:SimpleForm>
+        </content>
+    </Page>
+</mvc:View>
