@@ -1,26 +1,26 @@
 {
     "Controls": [{
-        "key": 1,
+        "id": "cistom_control_1",
         "label": "Name",
         "type": "Input",
         "value": 1111
     }, {
-        "key": 2,
+        "id": "cistom_control_1",
         "label": "Name2",
         "type": "Input",
         "value": 222
     }, {
-        "key": 3,
-        "label": "Name3",
+        "id": "cistom_control_1",
+        "label": null,
         "type": "Input",
         "value": 333
     }, {
-        "key": 4,
+        "id": "cistom_control_1",
         "label": "Name4",
         "type": "Input",
         "value": 444
     }, {
-        "key": 5,
+        "id": "cistom_control_1",
         "label": "Name5",
         "type": "Input",
         "value": 555

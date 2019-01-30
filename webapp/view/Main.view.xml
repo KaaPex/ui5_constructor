@@ -13,34 +13,45 @@
           class="sapUiSizeCompact">
 
         <content>
+            <Label text="Product" labelFor="productInput"/>
+            <Input id="productInput" value="test"/>
             <form:SimpleForm editable="true"
                              layout="ColumnLayout"
-                             emptySpanXL="0"
-                             emptySpanL="7"
-                             emptySpanM="0"
-                             emptySpanS="0"
-                             columnsXL="1"
-                             columnsL="1"
-                             columnsM="1"
                              singleContainerFullSize="false"
-                             width="50rem"
                              class="noTitle">
                 <form:content>
-                    <evola:Constructor
-                            change="onChangeValue"
-                            items="{/Controls}">
-                        <evola:items>
-                            <evola:ConstructorItem
-                                    name="{key}"
-                                    label="{label}"
-                                    type="{type}"
-                                    value="{value}"
-                                    change="onChangeValue"
-                                    liveChange="onLiveChange"/>
-                        </evola:items>
-                    </evola:Constructor>
+                    <Label text="Product" labelFor="productInput2"/>
+                    <Input id="productInput2" value="test"/>
+                    <!--<evola:Constructor items="{/Controls}">-->
+                        <!--<evola:items>-->
+                            <!--<evola:ConstructorItem-->
+                                    <!--type="{type}"-->
+                                    <!--value="{value}"-->
+                                    <!--change="onChangeValue"-->
+                                    <!--liveChange="onLiveChange">-->
+                                <!--&lt;!&ndash;<evola:ConstructorLabel text="{label}" forId="{id}" visible="{labelEnabled}"/>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<evola:ConstructorController text="{label}" forId="{id}" visible="{labelEnabled}"/>&ndash;&gt;-->
+                            <!--</evola:ConstructorItem>-->
+                        <!--</evola:items>-->
+                    <!--</evola:Constructor>-->
                 </form:content>
             </form:SimpleForm>
+
+            <evola:Constructor
+                    layout="ColumnLayout"
+                    items="{/Controls}">
+                <evola:items>
+                    <evola:ConstructorItem
+                            label="{label}"
+                            type="{type}"
+                            value="{value}"
+                            change="onChangeValue"
+                            liveChange="onLiveChange">
+                        <!--<evola:ConstructorLabel text="{label}" forId="{id}" visible="{labelEnabled}"/>-->
+                        <!--<evola:ConstructorController text="{label}" forId="{id}" visible="{labelEnabled}"/>-->
+                    </evola:ConstructorItem>
+                </evola:items>
+            </evola:Constructor>
         </content>
     </Page>
 </mvc:View>
