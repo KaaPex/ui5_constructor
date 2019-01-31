@@ -42,6 +42,7 @@
                     items="{/Controls}">
                 <evola:items>
                     <evola:ConstructorItem
+                            name="{id}"
                             label="{label}"
                             type="{type}"
                             value="{value}"

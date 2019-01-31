@@ -114,13 +114,19 @@ sap.ui.define(
         // oRm.write(">");
         let input = new sap.m.Input({
           valueHelpOnly: true,
-          // value: oControl.getValue(),
-          // name: oControl.getName(),
+          value: oControl.getValue(),
+          name: oControl.getName(),
           change: oControl.onChange.bind(oControl),
           liveChange: oControl.oninput.bind(oControl)
         });
         input.setBindingContext(oControl.getBindingContext());
-        input.bindValue(oControl.getBindingInfo("value"));
+        if (oControl.getBindingInfo("name")) {
+          input.bindProperty("name", oControl.getBindingInfo("name"));
+        }
+
+        if (oControl.getBindingInfo("value")) {
+          input.bindValue(oControl.getBindingInfo("value"));
+        }
 
         let oElement = new sap.ui.layout.form.FormElement();
         oElement.addField(input);
@@ -130,12 +136,16 @@ sap.ui.define(
           });
           label.setLabelFor(input);
           oElement.setLabel(label);
+          if (oControl.getBindingInfo("label")) {
+            label.bindProperty("text", oControl.getBindingInfo("label"));
+          }
           // oRm.renderControl(label);
         }
 
         let oContainer = new sap.ui.layout.form.FormContainer(
           oControl.getId() + "--Container"
         );
+        oContainer.setBindingContext(oControl.getBindingContext());
         oContainer.addFormElement(oElement);
         let oLayout = oControl.getLayout();
         oLayout.setParent(oContainer, null, true);
