@@ -1,5 +1,11 @@
 sap.ui.define(
-  ["sap/ui/core/Control", "sap/ui/core/library", "sap/ui/layout/library", "sap/ui/layout/form/ColumnLayout", "sap/ui/layout/form/ColumnLayout"],
+  [
+    "sap/ui/core/Control",
+    "sap/ui/core/library",
+    "sap/ui/layout/library",
+    "sap/ui/layout/form/ColumnLayout",
+    "sap/ui/layout/form/ColumnLayout"
+  ],
   function(Control, coreLibrary, library, ColumnLayout, ColumnLayoutRenderer) {
     "use strict";
 
@@ -72,6 +78,12 @@ sap.ui.define(
           }
         }
       },
+      setLayout: function(oLayout) {
+        this._layout = oLayout;
+      },
+      getLayout: function() {
+        return this._layout;
+      },
       onChange: function(oEvent) {
         // check the control is editable or not
         if (!this.getEditable() || !this.getEnabled()) {
@@ -89,9 +101,7 @@ sap.ui.define(
       oninput: function(oEvent) {
         this.fireLiveChange(oEvent.getParameters());
       },
-      init: function() {
-        
-      },
+      init: function() {},
       renderer: function(oRm, oControl) {
         //TODO: Need implement something like this https://github.com/SAP/openui5/blob/7672ca39cd0fdaf9e822172dd52e5d861aa0bd12/src/sap.ui.layout/src/sap/ui/layout/form/ColumnLayoutRenderer.js
         // oRm.write("<div");
@@ -104,11 +114,13 @@ sap.ui.define(
         // oRm.write(">");
         let input = new sap.m.Input({
           valueHelpOnly: true,
-          value: oControl.getValue(),
-          name: oControl.getName(),
+          // value: oControl.getValue(),
+          // name: oControl.getName(),
           change: oControl.onChange.bind(oControl),
           liveChange: oControl.oninput.bind(oControl)
         });
+        input.setBindingContext(oControl.getBindingContext());
+        input.bindValue(oControl.getBindingInfo("value"));
 
         let oElement = new sap.ui.layout.form.FormElement();
         oElement.addField(input);
@@ -121,12 +133,14 @@ sap.ui.define(
           // oRm.renderControl(label);
         }
 
-        let oContainer = new sap.ui.layout.form.FormContainer(oControl.getId() + "--Container");
+        let oContainer = new sap.ui.layout.form.FormContainer(
+          oControl.getId() + "--Container"
+        );
         oContainer.addFormElement(oElement);
-        let oLayout = new ColumnLayout(oContainer.getId() + "--Layout");
+        let oLayout = oControl.getLayout();
         oLayout.setParent(oContainer, null, true);
-        
-        let renderer = ColumnLayoutRenderer.prototype.getRenderer();
+
+        let renderer = oLayout.getRenderer();
         renderer.renderElement(oRm, oLayout, oElement);
 
         // oRm.renderControl(input);
