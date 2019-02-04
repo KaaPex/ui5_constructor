@@ -207,6 +207,12 @@ sap.ui.define(
             multiple: true,
             singularName: "item",
             bindable: "bindable"
+          },
+          inputs: {
+            type: "evola.ui.containers.ConstructorInput",
+            multiple: true,
+            singularName: "input",
+            bindable: "bindable"
           }
         },
         associations: {
@@ -233,6 +239,8 @@ sap.ui.define(
           sap.ui.core.Control.prototype.init.apply(this, arguments); // call the method with the original arguments
         }
 
+        this.oForm = new sap.ui.layout.form.Form(this.getId() + "--Form");
+
         //var libraryPath = jQuery.sap.getModulePath("evola.ui"); //get the server location of the ui library
         //jQuery.sap.includeStyleSheet(libraryPath + "/../css/dalrae.css"); //specify the css path relative from the ui folder
       },
@@ -255,46 +263,45 @@ sap.ui.define(
       },
 
       renderer: function(oRm, oControl) {
-        var oLayout = oControl.getLayout();
-
         oRm.write("<div");
-        //render width & height properties
-        oRm.write(
-          ' style="width: ' +
-            oControl.getWidth() +
-            "; height: " +
-            oControl.getHeight() +
-            ';"'
-        );
-        //next, render the control information, this handles your sId (you must do this for your control to be properly tracked by ui5).
+
+        if (oControl.getWidth()) {
+          oRm.addStyle("width", oControl.getWidth());
+        }
+
+        if (oControl.getHeight()) {
+          oRm.addStyle("height", oControl.getHeight());
+        }
+
         oRm.writeControlData(oControl);
-        oRm.addClass("sapUiSimpleForm");
+        oRm.addClass("sapUiForm");
+        oRm.addClass("sapUiFormLblColon"); // to always have the ":" at the Labels
         if (oControl.getEditable()) {
           oRm.addClass("sapUiFormEdit");
           oRm.addClass("sapUiFormEdit-CTX");
         }
-        oRm.writeStyles();
+        oRm.addClass("sapUiFormM");
+
         oRm.writeClasses();
+        oRm.writeStyles();
         oRm.write(">");
 
-        var aItems = oControl.getItems();
+        let oContainer = new sap.ui.layout.form.FormContainer(
+          oControl.getId() + "--Container"
+        );
+        oContainer.setBindingContext(oControl.getBindingContext());
 
-        // if (oLayout) {
-        //   // render the layout with the content of this form control
-        //   oRm.renderControl(oLayout);
-        // } else {
-        //   jQuery.sap.log.warning(
-        //     'Form "' + oControl.getId() + '" - Layout missing!',
-        //     "Renderer",
-        //     "Constructor"
-        //   );
-        // }
-
-        aItems.forEach(item => {
-          oRm.renderControl(item);
+        var aInputs = oControl.getInputs();
+        aInputs.forEach(input => {
+          oContainer.addFormElement(_createElement(oRm, input));
         });
+        oControl.oForm.addFormContainer(oContainer);
 
-        //and obviously, close off our div
+        let oLayout = oControl.oForm.getLayout();
+        // oLayout.setParent(form, null, true);
+
+        oRm.renderControl(oLayout);
+
         oRm.write("</div>");
       },
 
@@ -308,14 +315,32 @@ sap.ui.define(
       exit: function() {}
     });
 
+    function _createElement(oRm, oControl) {
+      let oElement = new sap.ui.layout.form.FormElement();
+      oElement.addField(oControl);
+
+      if (oControl.getLabel()) {
+        let label = new sap.m.Label({
+          text: oControl.getLabel()
+        });
+        label.setLabelFor(oControl);
+        oElement.setLabel(label);
+        if (oControl.getBindingInfo("label")) {
+          label.bindProperty("text", oControl.getBindingInfo("label"));
+        }
+      }
+
+      return oElement;
+    }
+
     function _setLayout() {
-      var oItems = this.getAggregation("items");
-      // if (oItems.getLayout()) {
-      //   this._bChangedByMe = true;
-      //   oItems.destroyLayout();
-      //   // _removeResize.call(this);
-      //   this._bChangedByMe = false;
-      // }
+      var oForm = this.oForm;
+      if (oForm.getLayout()) {
+        this._bChangedByMe = true;
+        oForm.destroyLayout();
+        // _removeResize.call(this);
+        this._bChangedByMe = false;
+      }
 
       var oLayout;
 
@@ -411,12 +436,7 @@ sap.ui.define(
 
       if (oLayout) {
         this._bChangedByMe = true;
-        oItems.forEach(item => {
-          if (!item.getLayout()) {
-            item.setLayout(oLayout);
-          }
-        });
-
+        oForm.setLayout(oLayout);
         this._bChangedByMe = false;
         return true; // layout set
       }
@@ -432,58 +452,54 @@ sap.ui.define(
       this._changedFormContainers = [];
 
       var sLayout = this.getLayout();
-      this.getAggregation("items").forEach(item => {
-        var oLayout = item.getLayout();
-        if (!oLayout) {
-          return;
-        }
-        oLayout.setBackgroundDesign(this.getBackgroundDesign());
+      var oLayout = this.oForm.getLayout();
+      if (!oLayout) {
+        return;
+      }
+      oLayout.setBackgroundDesign(this.getBackgroundDesign());
 
-        switch (sLayout) {
-          case SimpleFormLayout.ResponsiveLayout:
-            // // set the default values for linebreakes to avoid flickering for default case
-            // this._applyLinebreaks();
-            //
-            // for ( var i = 0; i < this._changedFormElements.length; i++) {
-            //   var oFormElement = this._changedFormElements[i];
-            //   _applyFieldWeight.call(this, oFormElement);
-            // }
-            break;
-          case SimpleFormLayout.GridLayout:
-            // _applyContainerSize.call(this);
-            break;
-          case SimpleFormLayout.ResponsiveGridLayout:
-            oLayout.setLabelSpanXL(this.getLabelSpanXL());
-            oLayout.setLabelSpanL(this.getLabelSpanL());
-            oLayout.setLabelSpanM(this.getLabelSpanM());
-            oLayout.setLabelSpanS(this.getLabelSpanS());
-            oLayout.setAdjustLabelSpan(this.getAdjustLabelSpan());
-            oLayout.setEmptySpanXL(this.getEmptySpanXL());
-            oLayout.setEmptySpanL(this.getEmptySpanL());
-            oLayout.setEmptySpanM(this.getEmptySpanM());
-            oLayout.setEmptySpanS(this.getEmptySpanS());
-            oLayout.setColumnsXL(this.getColumnsXL());
-            oLayout.setColumnsL(this.getColumnsL());
-            oLayout.setColumnsM(this.getColumnsM());
-            oLayout.setSingleContainerFullSize(
-              this.getSingleContainerFullSize()
-            );
-            oLayout.setBreakpointXL(this.getBreakpointXL());
-            oLayout.setBreakpointL(this.getBreakpointL());
-            oLayout.setBreakpointM(this.getBreakpointM());
-            break;
-          case SimpleFormLayout.ColumnLayout:
-            oLayout.setColumnsXL(
-              this.getColumnsXL() > 0 ? this.getColumnsXL() : this.getColumnsL()
-            );
-            oLayout.setColumnsL(this.getColumnsL());
-            oLayout.setColumnsM(this.getColumnsM());
-            oLayout.setLabelCellsLarge(this.getLabelSpanL());
-            oLayout.setEmptyCellsLarge(this.getEmptySpanL());
-            break;
-          // no default
-        }
-      });
+      switch (sLayout) {
+        case SimpleFormLayout.ResponsiveLayout:
+          // // set the default values for linebreakes to avoid flickering for default case
+          // this._applyLinebreaks();
+          //
+          // for ( var i = 0; i < this._changedFormElements.length; i++) {
+          //   var oFormElement = this._changedFormElements[i];
+          //   _applyFieldWeight.call(this, oFormElement);
+          // }
+          break;
+        case SimpleFormLayout.GridLayout:
+          // _applyContainerSize.call(this);
+          break;
+        case SimpleFormLayout.ResponsiveGridLayout:
+          oLayout.setLabelSpanXL(this.getLabelSpanXL());
+          oLayout.setLabelSpanL(this.getLabelSpanL());
+          oLayout.setLabelSpanM(this.getLabelSpanM());
+          oLayout.setLabelSpanS(this.getLabelSpanS());
+          oLayout.setAdjustLabelSpan(this.getAdjustLabelSpan());
+          oLayout.setEmptySpanXL(this.getEmptySpanXL());
+          oLayout.setEmptySpanL(this.getEmptySpanL());
+          oLayout.setEmptySpanM(this.getEmptySpanM());
+          oLayout.setEmptySpanS(this.getEmptySpanS());
+          oLayout.setColumnsXL(this.getColumnsXL());
+          oLayout.setColumnsL(this.getColumnsL());
+          oLayout.setColumnsM(this.getColumnsM());
+          oLayout.setSingleContainerFullSize(this.getSingleContainerFullSize());
+          oLayout.setBreakpointXL(this.getBreakpointXL());
+          oLayout.setBreakpointL(this.getBreakpointL());
+          oLayout.setBreakpointM(this.getBreakpointM());
+          break;
+        case SimpleFormLayout.ColumnLayout:
+          oLayout.setColumnsXL(
+            this.getColumnsXL() > 0 ? this.getColumnsXL() : this.getColumnsL()
+          );
+          oLayout.setColumnsL(this.getColumnsL());
+          oLayout.setColumnsM(this.getColumnsM());
+          oLayout.setLabelCellsLarge(this.getLabelSpanL());
+          oLayout.setEmptyCellsLarge(this.getEmptySpanL());
+          break;
+        // no default
+      }
 
       this._changedFormElements = [];
       this._bChangedByMe = false;

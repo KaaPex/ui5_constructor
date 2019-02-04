@@ -13,45 +13,20 @@
           class="sapUiSizeCompact">
 
         <content>
-            <Label text="Product" labelFor="productInput"/>
-            <Input id="productInput" value="test"/>
-            <form:SimpleForm editable="true"
-                             layout="ColumnLayout"
-                             singleContainerFullSize="false"
-                             class="noTitle">
-                <form:content>
-                    <Label text="Product" labelFor="productInput2"/>
-                    <Input id="productInput2" value="test"/>
-                    <!--<evola:Constructor items="{/Controls}">-->
-                        <!--<evola:items>-->
-                            <!--<evola:ConstructorItem-->
-                                    <!--type="{type}"-->
-                                    <!--value="{value}"-->
-                                    <!--change="onChangeValue"-->
-                                    <!--liveChange="onLiveChange">-->
-                                <!--&lt;!&ndash;<evola:ConstructorLabel text="{label}" forId="{id}" visible="{labelEnabled}"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<evola:ConstructorController text="{label}" forId="{id}" visible="{labelEnabled}"/>&ndash;&gt;-->
-                            <!--</evola:ConstructorItem>-->
-                        <!--</evola:items>-->
-                    <!--</evola:Constructor>-->
-                </form:content>
-            </form:SimpleForm>
-
             <evola:Constructor
                     layout="ColumnLayout"
-                    items="{/Controls}">
-                <evola:items>
-                    <evola:ConstructorItem
+                    singleContainerFullSize="false"
+                    inputs="{/Controls}">
+                <evola:inputs>
+                    <evola:ConstructorInput
                             name="{id}"
                             label="{label}"
                             type="{type}"
                             value="{value}"
                             change="onChangeValue"
                             liveChange="onLiveChange">
-                        <!--<evola:ConstructorLabel text="{label}" forId="{id}" visible="{labelEnabled}"/>-->
-                        <!--<evola:ConstructorController text="{label}" forId="{id}" visible="{labelEnabled}"/>-->
-                    </evola:ConstructorItem>
-                </evola:items>
+                    </evola:ConstructorInput>
+                </evola:inputs>
             </evola:Constructor>
         </content>
     </Page>

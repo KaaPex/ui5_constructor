@@ -1,19 +1,19 @@
 sap.ui.define(
   [
-    "sap/ui/core/Control",
+    "sap/m/InputBase",
     "sap/ui/core/library",
     "sap/ui/layout/library",
     "sap/ui/layout/form/ColumnLayout",
     "sap/ui/layout/form/ColumnLayout"
   ],
-  function(Control, coreLibrary, library, ColumnLayout, ColumnLayoutRenderer) {
+  function(InputBase, coreLibrary, library, ColumnLayout, ColumnLayoutRenderer) {
     "use strict";
 
     // shortcut for sap.ui.core.ValueState
     let ValueState = coreLibrary.ValueState;
     var SimpleFormLayout = library.form.SimpleFormLayout;
 
-    return Control.extend("evola.ui.containers.ConstructorItem", {
+    return InputBase.extend("evola.ui.containers.ConstructorInput", {
       metadata: {
         properties: {
           name: {
@@ -119,36 +119,7 @@ sap.ui.define(
           input.bindValue(oControl.getBindingInfo("value"));
         }
 
-        let oElement = new sap.ui.layout.form.FormElement();
-        oElement.addField(input);
-        if (oControl.getLabel()) {
-          let label = new sap.m.Label({
-            text: oControl.getLabel()
-          });
-          label.setLabelFor(input);
-          oElement.setLabel(label);
-          if (oControl.getBindingInfo("label")) {
-            label.bindProperty("text", oControl.getBindingInfo("label"));
-          }
-        }
-
-        let oContainer = new sap.ui.layout.form.FormContainer(
-          oControl.getId() + "--Container"
-        );
-        oContainer.setBindingContext(oControl.getBindingContext());
-        oContainer.addFormElement(oElement);
-        let oLayout = oControl.getLayout();
-
-        let form = new sap.ui.layout.form.Form(oControl.getId() + "--Form");
-        form.addFormContainer(oContainer);
-        oLayout.setParent(form, null, true);
-
-        let renderer = oLayout.getRenderer();
-        //renderer.renderContainer(oRm, oLayout, oContainer);
-        renderer.renderElement(oRm, oLayout, oElement);
-
-        // render the layout with the content of this form control
-        // oRm.renderControl(oLayout);
+        oRm.renderControl(input);
 
       },
       onAfterRendering: function() {
